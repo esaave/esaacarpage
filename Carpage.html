@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AutoMarket Pro — Ultra Futurista</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#1A1A1D; /* fondo */
+      --navy:#002349; /* secciones */
+      --neon:#00FFFF; /* acento azul neon */
+      --neon-green:#00FF41;
+      --gold:#957C3D; /* dorado mate */
+      --muted:#BFC7CE;
+      --glass: rgba(255,255,255,0.03);
+      --card: rgba(255,255,255,0.02);
+      --radius:14px;
+    }
+
+    /* Mobile-first base */
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--bg); color:#E6E6E6; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Header / Nav */
+    header{
+      position:sticky; top:0; z-index:60; backdrop-filter: blur(6px);
+      background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.25)); border-bottom:1px solid rgba(255,255,255,0.03);
+      padding:10px 16px; display:flex; align-items:center; gap:12px; justify-content:space-between;
+    }
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{
+      font-family:Orbitron, sans-serif; font-weight:900; letter-spacing:1px; color:var(--neon);
+      display:inline-block; padding:6px 10px; border-radius:8px; background:linear-gradient(90deg, rgba(0,35,73,0.25), rgba(0,255,255,0.03));
+    }
+    nav ul{display:flex; gap:14px; margin:0; padding:0; list-style:none; align-items:center}
+    nav a{color:var(--muted); text-decoration:none; font-weight:600; font-size:14px; padding:6px 10px; border-radius:8px}
+    nav a.cta{background:linear-gradient(90deg, rgba(0,255,255,0.06), rgba(0,255,65,0.02)); color:var(--neon); box-shadow:0 6px 18px rgba(0,255,255,0.04)}
+    nav a:hover{color:var(--neon); transform:translateY(-1px)}
+
+    /* Hero / Scroll storytelling */
+    .hero{min-height:85vh; display:grid; grid-template-columns:1fr; align-items:center; padding:36px 20px; position:relative; overflow:hidden}
+    .hero-grid{max-width:1200px; margin:0 auto; display:grid; gap:20px}
+    .hero-left{padding:20px 12px}
+    h1{font-family:Orbitron, sans-serif; font-size:28px; margin:0 0 10px; color:var(--neon);}
+    .subtitle{font-size:14px; color:var(--muted); margin-bottom:16px}
+
+    .pill{display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border-radius:999px; background:linear-gradient(90deg, rgba(0,35,73,0.6), rgba(0,35,73,0.4)); border:1px solid rgba(255,255,255,0.03); color:var(--neon-green); font-weight:600}
+
+    .cta-row{display:flex; gap:12px; margin-top:12px}
+    .btn{background:linear-gradient(90deg, rgba(0,255,255,0.06), rgba(0,255,65,0.03)); color:var(--neon); padding:12px 18px; border-radius:12px; border:0; font-weight:700; cursor:pointer; box-shadow:0 8px 30px rgba(0,255,255,0.04); transition:all .18s ease}
+    .btn:hover{filter:brightness(1.15); box-shadow:0 12px 44px rgba(0,255,255,0.12); transform:translateY(-4px)}
+
+    /* Visual car panel */
+    .panel{background:linear-gradient(180deg, rgba(0,35,73,0.18), rgba(0,0,0,0.15)); border-radius:16px; padding:18px; border:1px solid rgba(255,255,255,0.03)}
+
+    /* 360 viewer (placeholder using draggable rotation) */
+    .viewer{height:340px; border-radius:12px; overflow:hidden; position:relative; background:radial-gradient(circle at 10% 10%, rgba(0,255,255,0.02), transparent 10%), linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.2)); display:flex; align-items:center; justify-content:center}
+    .car-img{width:100%; max-width:680px; transform-style:preserve-3d; transition:transform .12s linear}
+
+    /* hotspots */
+    .hotspot{position:absolute; width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, rgba(0,255,255,0.06), rgba(0,255,65,0.02)); border:2px solid rgba(0,255,255,0.12); box-shadow:0 6px 24px rgba(0,255,255,0.04); cursor:pointer}
+    .hotspot .dot{width:8px; height:8px; border-radius:50%; background:var(--neon)}
+    .hot-info{position:absolute; padding:12px; min-width:220px; background:linear-gradient(180deg, rgba(10,20,30,0.7), rgba(0,0,0,0.6)); border:1px solid rgba(0,255,255,0.06); border-radius:10px; color:#E6FFF9; transform:translateY(-12px); display:none}
+
+    /* Repuestos HUD */
+    .hud{display:grid; gap:12px; padding:18px; background:linear-gradient(180deg, rgba(0,35,73,0.12), rgba(0,0,0,0.14)); border-radius:12px}
+    .vin-row{display:flex; gap:10px; align-items:center}
+    .vin-input{background:transparent; border:1px solid rgba(255,255,255,0.06); padding:12px 14px; border-radius:10px; color:var(--neon); width:100%; font-weight:700}
+    .micro-display{padding:12px; border-radius:10px; background:linear-gradient(90deg, rgba(0,0,0,0.4), rgba(0,35,73,0.12)); border:1px solid rgba(255,255,255,0.03); font-size:13px}
+
+    /* Section styles */
+    section{padding:40px 18px}
+    .container{max-width:1200px; margin:0 auto}
+
+    /* Repuestos list */
+    .parts-grid{display:grid; grid-template-columns:repeat(1,1fr); gap:12px}
+    .part{display:flex; gap:12px; align-items:center; padding:12px; border-radius:10px; background:var(--card); border:1px solid rgba(255,255,255,0.02)}
+    .part img{width:68px; height:68px; object-fit:cover; border-radius:8px}
+    .part .meta{flex:1}
+    .badge{font-size:12px; padding:6px 8px; border-radius:8px; background:rgba(0,255,255,0.04); color:var(--neon); font-weight:700}
+
+    /* Testimonials */
+    .testimonials{display:grid; grid-template-columns:1fr; gap:12px}
+    .test{padding:14px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.1))}
+
+    /* Footer */
+    footer{padding:28px 18px; border-top:1px solid rgba(255,255,255,0.02)}
+    .trusts{display:flex; gap:14px; align-items:center; flex-wrap:wrap}
+    .seal{padding:8px 12px; border-radius:10px; background:linear-gradient(90deg, rgba(149,124,61,0.08), rgba(0,0,0,0.1)); color:var(--gold); font-weight:700}
+
+    /* Desktop enhancements */
+    @media(min-width:900px){
+      .hero-grid{grid-template-columns:1fr 640px; align-items:center}
+      h1{font-size:44px}
+      .viewer{height:480px}
+      .parts-grid{grid-template-columns:repeat(2,1fr)}
+      .testimonials{grid-template-columns:repeat(3,1fr)}
+    }
+
+    /* small animations for HUD background lines */
+    .wireframe{position:absolute; inset:0; pointer-events:none; opacity:0.06; background-image:radial-gradient(circle at 10% 10%, rgba(0,255,255,0.03), transparent 6%), linear-gradient(90deg, rgba(0,35,73,0.06), transparent 40%)}
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">AUTOMARKET</div>
+    <div style="font-size:12px; color:var(--muted);">Pro • Elite • Certificado</div>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#home">Inicio</a></li>
+      <li><a href="#carros">Vehículos</a></li>
+      <li><a href="#repuestos">Repuestos</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#testimonios">Testimonios</a></li>
+      <li><a href="#contacto" class="cta">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <!-- HERO / Scroll Storytelling -->
+  <section id="home" class="hero">
+    <div class="wireframe" aria-hidden="true"></div>
+    <div class="hero-grid container">
+      <div class="hero-left">
+        <div class="pill">ULTRA • FUTURISTA</div>
+        <h1>Plataforma premium para carros de alta gama y repuestos especializados</h1>
+        <p class="subtitle">Experiencias inmersivas, búsqueda de compatibilidad por VIN y certificaciones de confianza. Diseñado como un display de vehículo autónomo.</p>
+
+        <div class="cta-row">
+          <button class="btn" onclick="document.getElementById('carros').scrollIntoView({behavior:'smooth'})">Ver vehículos</button>
+          <button class="btn" onclick="document.getElementById('repuestos').scrollIntoView({behavior:'smooth'})">Buscar repuestos</button>
+        </div>
+
+        <div style="margin-top:18px; display:flex; gap:12px; align-items:center">
+          <div class="micro-display">Velocidad: <strong>Optimizada</strong></div>
+          <div class="micro-display">SEO: <strong>Mobile-First</strong></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <!-- Panel visual: 3 pilares con paralaje -->
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; gap:12px; align-items:center; justify-content:space-between">
+            <div style="flex:1; padding-right:12px">
+              <h3 style="margin:0; color:var(--neon)">Carros — Inmersivo 3D</h3>
+              <p style="margin:6px 0 0; color:var(--muted); font-size:13px">Vista 360° con hotspots y modo AR.</p>
+            </div>
+            <div style="width:120px; display:flex; gap:8px; justify-content:flex-end">
+              <div class="micro-display">Certificación</div>
+              <div class="micro-display">Garantía 12m</div>
+            </div>
+          </div>
+
+          <div class="viewer" id="viewer">
+            <img class="car-img" id="carImg" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='600'><rect width='100%' height='100%' fill='%23002249'/><text x='50%' y='50%' fill='%23E6E6E6' font-size='36' font-family='Orbitron' text-anchor='middle'>IMAGEN 3D DEL VEHÍCULO (placeholder)</text></svg>" alt="Vehículo"/>
+            <!-- Hotspots -->
+            <div class="hotspot" style="left:18%; top:36%" data-info="Motor V8 4.0L — 620HP"><div class="dot"></div></div>
+            <div class="hotspot" style="left:62%; top:44%" data-info="Frenos carbon-cerámicos — Nuevo"><div class="dot"></div></div>
+            <div class="hotspot" style="left:78%; top:68%" data-info="Interior cuero Nappa — Opcional"><div class="dot"></div></div>
+
+            <div class="hot-info" id="hotInfo">Info</div>
+          </div>
+
+          <div style="display:flex; gap:10px; align-items:center; justify-content:space-between">
+            <div style="display:flex; gap:8px; align-items:center">
+              <button class="btn" onclick="openAR()">Ver en AR</button>
+              <button class="btn">Solicitar certificado</button>
+            </div>
+            <div style="color:var(--muted); font-size:13px">Desliza/arrastra para rotar • Haz clic en puntos neón</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VEHÍCULOS (sin inventario) -->
+  <section id="carros">
+    <div class="container">
+      <h2 style="color:var(--neon)">Catalogo de Vehículos</h2>
+      <p style="color:var(--muted)">Lista curada — Sin inventario público (uso interno)</p>
+
+      <div style="display:grid; gap:14px; margin-top:18px">
+        <!-- Ejemplo de tarjeta (estática) -->
+        <article class="part" style="align-items:flex-start">
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='120'><rect width='100%' height='100%' fill='%23001a1d'/><text x='50%' y='55%' fill='%23E6E6E6' font-size='14' font-family='Inter' text-anchor='middle'>Porsche 911 Turbo (placeholder)</text></svg>" alt="Porsche" />
+          <div class="meta">
+            <h3 style="margin:0; color:var(--neon); font-family:Orbitron;">Porsche 911 Turbo S</h3>
+            <div style="color:var(--muted); font-size:13px">Año 2021 • 6,200 km • Certificado Elite</div>
+            <div style="margin-top:10px; display:flex; gap:8px">
+              <button class="btn">Ver Ficha</button>
+              <button class="btn">Contactar Asesor</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPUESTOS HUD -->
+  <section id="repuestos">
+    <div class="container">
+      <h2 style="color:var(--neon)">Repuestos — Buscador de Compatibilidad</h2>
+      <p style="color:var(--muted)">Introduce VIN o modelo para diagnosticar compatibilidad de forma instantánea.</p>
+
+      <div class="hud">
+        <div class="vin-row">
+          <input id="vinInput" class="vin-input" placeholder="Ingresa VIN (ej. 1HGCM82633A004352) o modelo" />
+          <button class="btn" onclick="checkVIN()">Analizar</button>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:8px; align-items:center">
+          <div class="micro-display" id="vinResult">Estado: —</div>
+          <div class="micro-display">Puerto diagnóstico: <strong>OK</strong></div>
+        </div>
+
+        <div id="partsArea" style="margin-top:12px">
+          <div style="color:var(--muted); font-size:13px">Repuestos compatibles:</div>
+          <div class="parts-grid" id="partsGrid">
+            <!-- Rellenado dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section id="servicios">
+    <div class="container">
+      <h2 style="color:var(--neon)">Servicios Especializados</h2>
+      <p style="color:var(--muted)">Pintura premium, enderezado de chasis, diagnóstico por VIN y gestión de certificaciones.</p>
+      <div style="display:grid; gap:12px; margin-top:12px">
+        <div class="part">
+          <div style="flex:1">
+            <h4 style="margin:0; color:var(--neon)">Diagnóstico por VIN</h4>
+            <p style="margin:6px 0 0; color:var(--muted); font-size:13px">Conexión a puerto virtual y reporte técnico en PDF.</p>
+          </div>
+          <div class="badge">Premium</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section id="testimonios">
+    <div class="container">
+      <h2 style="color:var(--neon)">Clientes Verificados</h2>
+      <div class="testimonials" style="margin-top:12px">
+        <div class="test">
+          <strong style="color:var(--neon)">María P.</strong>
+          <p style="color:var(--muted); margin:6px 0 0">Compra rápida y certificación inmediata. Equipo profesional — 5 estrellas.</p>
+        </div>
+        <div class="test">
+          <strong style="color:var(--neon)">Carlos G.</strong>
+          <p style="color:var(--muted); margin:6px 0 0">Repuestos exactos para mi Porsche, entrega asegurada.</p>
+        </div>
+        <div class="test">
+          <strong style="color:var(--neon)">Elite Motors</strong>
+          <p style="color:var(--muted); margin:6px 0 0">Integración B2B impecable y soporte 24/7.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO / FOOTER -->
+  <footer id="contacto">
+    <div class="container" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; align-items:center">
+        <div>
+          <h3 style="margin:0; color:var(--neon)">Soporte 24/7</h3>
+          <div style="color:var(--muted); font-size:13px">contacto@automarket.pro • +1 (555) 123-4567</div>
+        </div>
+        <div class="trusts">
+          <div class="seal">Pago Seguro</div>
+          <div class="seal">Garantía 12m</div>
+          <div class="seal">Envío Asegurado</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap">
+        <div style="color:var(--muted)">© <strong>AUTOMARKET</strong> — Plataforma Interna • Diseñado Ultra-Futurista</div>
+        <div style="color:var(--muted)">Política de privacidad • Términos</div>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  /* ------------- Viewer: rotación por arrastre (simulación 3D) ------------- */
+  (function(){
+    const img = document.getElementById('carImg');
+    let startX=0, rot=0, dragging=false;
+    function down(e){ dragging=true; startX = e.touches ? e.touches[0].clientX : e.clientX; }
+    function up(){ dragging=false }
+    function move(e){ if(!dragging) return; const x = e.touches ? e.touches[0].clientX : e.clientX; const dx = x - startX; startX = x; rot += dx * 0.2; img.style.transform = `perspective(1200px) rotateY(${rot}deg)` }
+    img.addEventListener('mousedown', down); img.addEventListener('touchstart', down);
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move);
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+
+    // Hotspots behavior
+    document.querySelectorAll('.hotspot').forEach(h =>{
+      const info = document.getElementById('hotInfo');
+      h.addEventListener('mouseenter', ()=>{ info.style.display='block'; info.innerText = h.dataset.info; const r = h.getBoundingClientRect(); info.style.left = (r.left + r.width/2) + 'px'; info.style.top = (r.top - 60) + 'px'; });
+      h.addEventListener('mouseleave', ()=>{ info.style.display='none'; });
+      h.addEventListener('click', ()=>{ alert('Abrir panel técnico:\n'+h.dataset.info) });
+    });
+  })();
+
+  /* ------------- VIN checker (simulado) ------------- */
+  function checkVIN(){
+    const vin = document.getElementById('vinInput').value.trim();
+    const result = document.getElementById('vinResult');
+    const grid = document.getElementById('partsGrid');
+    grid.innerHTML='';
+    if(!vin){ result.innerText='Estado: Ingresa VIN o modelo'; return }
+
+    // Simulación rápida: si contiene número par -> compatible, impar -> parcialmente
+    const lastChar = vin.slice(-1);
+    const even = /[02468]$/.test(lastChar);
+    if(even){ result.innerText='Estado: Compatible ✅'; result.style.color='var(--neon)'; populateParts('full'); }
+    else{ result.innerText='Estado: Parcialmente compatible ⚠️'; result.style.color='#FFC857'; populateParts('partial'); }
+  }
+
+  function populateParts(mode){
+    const grid = document.getElementById('partsGrid');
+    const partsFull = [
+      {name:'Filtro de aceite — OEM', sku:'F-911-01', img:'', compat:'100%'},
+      {name:'Juego frenos carbon-ceramicos', sku:'B-CC-42', img:'', compat:'100%'},
+      {name:'Juego de bujías rendimiento', sku:'SPRK-9', img:'', compat:'94%'}
+    ];
+    const partsPartial = [
+      {name:'Parachoques delantero — revisar montaje', sku:'BP-12', img:'', compat:'75%'},
+      {name:'Faros LED adaptativos (mod)', sku:'L-AD-02', img:'', compat:'68%'}
+    ];
+    const list = (mode==='full') ? partsFull : partsPartial;
+    list.forEach(p=>{
+      const el = document.createElement('div'); el.className='part';
+      el.innerHTML = `<img src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'160\' height=\'100\'><rect width=\'100%\' height=\'100%\' fill=\'%23002249\'/><text x=\'50%\' y=\'55%\' fill=\'%23E6E6E6\' font-size=\'12\' font-family=\'Inter\' text-anchor=\'middle\'>${encodeURIComponent(p.name)}</text></svg>' alt=''></img>
+        <div class='meta'><div style='color:var(--neon); font-weight:700'>${p.name}</div><div style='color:var(--muted); font-size:13px'>SKU: ${p.sku} • Compat: ${p.compat}</div></div>
+        <div style='display:flex; gap:8px; align-items:center'><button class='btn' onclick="requestPart('${p.sku}')">Solicitar</button></div>`;
+      grid.appendChild(el);
+    });
+  }
+
+  function requestPart(sku){ alert('Solicitud enviada para SKU: '+sku+' (simulado)'); }
+
+  /* ------------- AR placeholder ------------- */
+  function openAR(){ alert('Función AR: Integración disponible. Puedo añadir <model-viewer> o WebAR si quieres — requiere assets 3D.'); }
+
+  /* ------------- Performance hints (no-op): lazy load images, reduce JS, keep CSS inline for speed. ------------- */
+
+  // Smooth reveal animations (IntersectionObserver)
+  (function(){
+    const obs = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.style.opacity=1; e.target.style.transform='none'; obs.unobserve(e.target); } }); }, {threshold:0.12});
+    document.querySelectorAll('section').forEach(s=>{ s.style.opacity=0; s.style.transform='translateY(18px)'; s.style.transition='opacity .7s ease, transform .7s ease'; obs.observe(s); });
+  })();
+</script>
+
+</body>
+</html>
